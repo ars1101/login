@@ -2,10 +2,19 @@
 import 'package:login/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:login/home.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  await Supabase.initialize(
+    url: 'https://gxzfswhoxmcuzquqxzio.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd4emZzd2hveG1jdXpxdXF4emlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDY5NzM3OTMsImV4cCI6MjAyMjU0OTc5M30.5-7fx9uLmXTUDO5Tz0Keb3LvSxcVY4fIRUb2n3KtUnw',
+  );
+
+  runApp(MyApp());
 }
+
+final supabase = Supabase.instance.client;
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -38,6 +47,8 @@ class _LoginState extends State<Login> {
 
   TextEditingController emailController = TextEditingController(text: '************@mail.com');
   TextEditingController passwordController = TextEditingController(text: '**********');
+  var password = '**********';
+  var email = '************@mail.com';
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +137,7 @@ class _LoginState extends State<Login> {
 
 
 
-          ),)),
+          ),onChanged: (value){setState(() => password = value);},)),
 
                 Row(children: [
                   Checkbox(value: false, onChanged: null),
@@ -156,7 +167,20 @@ class _LoginState extends State<Login> {
                 ],),
                 Spacer(),
                 SizedBox(width: 352,height: 40,child:
-              OutlinedButton(onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context) => home()));},child: Text(
+              OutlinedButton(onPressed: ()async{print(password);
+                print(email);
+                final AuthResponse res = await supabase.auth.signInWithPassword(
+                email: emailController.text,
+                password: password,
+              );
+              final Session? session = res.session;
+              final User? user = res.user;
+
+              if (user != null) {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => home(email: user.email!,)));
+              }
+              else{print('error');}
+              },child: Text(
                 'Login',
                 textAlign: TextAlign.center,
                 style: TextStyle(

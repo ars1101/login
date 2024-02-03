@@ -1,8 +1,13 @@
 import 'package:login/main.dart';
 import 'package:flutter/material.dart';
+import 'package:login/sign_up.dart';
 
+var a = '';
 class home extends StatefulWidget {
-  const home({super.key,});
+  home({super.key, required final String email}){
+    a = email;
+  }
+
 
 
 
@@ -61,7 +66,7 @@ class _homeState extends State<home> {
         Column(crossAxisAlignment: CrossAxisAlignment.start,children: [SizedBox(
           width: 132.43,
           child: Text(
-            'Hello Ken',
+            'Hello ' + a,
             style: TextStyle(
               color: Color(0xFF3A3A3A),
               fontSize: 16,

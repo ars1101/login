@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:login/main.dart';
 import 'package:login/home.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class sign extends StatefulWidget {
   const sign({
@@ -20,6 +21,8 @@ class _signState extends State<sign> {
       TextEditingController(text: 'Ivan Ivanov');
   TextEditingController phoneController =
       TextEditingController(text: '+7(999)999-99-99');
+  var password = '**********';
+  var email = '************@mail.com';
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +128,7 @@ class _signState extends State<sign> {
                       borderSide:
                       BorderSide(width: 1, color: Color(0xFFA6A6A6)),
                       borderRadius: BorderRadius.circular(4)),
-                ),
+                ), onChanged: (value) => setState(() => password = value),
               )), SizedBox(height: 24,),
           Text(
             'Email Address',
@@ -159,7 +162,7 @@ class _signState extends State<sign> {
                       borderSide:
                           BorderSide(width: 1, color: Color(0xFFA6A6A6)),
                       borderRadius: BorderRadius.circular(4)),
-                ),
+                ), onChanged: (value) => setState(() => email = value),
               )),
           SizedBox(
             height: 24,
@@ -283,7 +286,13 @@ class _signState extends State<sign> {
               width: 352,
               height: 40,
               child: OutlinedButton(
-                  onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => home()));},
+                  onPressed: () async {var res = await supabase.auth.signUp(password: password, email: email, );
+                  final Session? session = res.session;
+                  final User? user = res.user;
+                  if(user != null){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => home(email: email,)));
+                  }
+                  },
                   child: Text(
                     'Sign Up',
                     textAlign: TextAlign.center,
